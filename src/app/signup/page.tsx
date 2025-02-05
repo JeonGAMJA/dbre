@@ -4,7 +4,7 @@ import Heading from '../components/ui/Heading';
 import { Button } from '../components/ui/Button';
 import TextButton from '@/app/components/ui/TextButton';
 import { FormField } from '../components/signup/FormField';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { SignupFormData, SignUpSchema } from '../auth/schemas/SignupSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SIGNUP_FIELDS } from '@/constants/signup';

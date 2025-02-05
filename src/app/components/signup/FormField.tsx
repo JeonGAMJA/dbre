@@ -77,14 +77,12 @@ export const FormField = ({ field }: FormFieldProps) => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // 각 필드 타입에 따라 다른 처리
     const value = e.target.value;
 
     switch (field.type) {
       case 'tel':
-        // 전화번호의 경우 포맷팅
-        const formattedPhone = formatPhoneNumber(value);
-        setValue(field.id, formattedPhone, { shouldValidate: true });
+        e.target.value = formatPhoneNumber(value);
+        setValue(field.id, e.target.value, { shouldValidate: true });
         break;
 
       case 'email':
@@ -96,7 +94,6 @@ export const FormField = ({ field }: FormFieldProps) => {
         break;
 
       default:
-        // 나머지 필드들
         setValue(field.id, value, { shouldValidate: true });
     }
   };
