@@ -45,16 +45,15 @@ export const SignUpSchema = z
 
     phone_number: z
       .string()
-      .regex(/^01[0-9]-?\d{3,4}-?\d{4}$/, '휴대폰번호 유형에 맞게 입력해주세요.'),
-    // .min(12, '휴대폰 번호는 10자리 이상 입력해야 합니다.')
-    // .max(13, '휴대폰 번호는 11자리 이하로 입력해야 합니다.'),
+      .regex(/^01[0-9]-\d{3,4}-\d{4}$/, '휴대폰번호 유형에 맞게 입력해주세요.'),
 
     /** 휴대폰 인증 필수 */
 
     phone_auth: z
       .string()
       .min(6, '인증번호는 6자리 숫자로 입력해주세요.')
-      .max(6, '인증번호는 6자리 숫자로 입력해주세요.'),
+      .max(6, '인증번호는 6자리 숫자로 입력해주세요.')
+      .optional(),
 
     isPhoneVerified: z.boolean().refine(value => value === true, {
       message: '휴대폰 인증이 필요합니다.',
