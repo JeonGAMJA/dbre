@@ -27,12 +27,7 @@ export const SignUpSchema = z
         },
       ),
 
-    password_confirm: z
-      .string()
-      .min(1, '비밀번호 확인을 입력해주세요.')
-      .min(10, '비밀번호는 최소 10자 이상이어야 합니다.')
-      .max(20, '비밀번호는 최대 20자까지만 허용됩니다.'),
-
+    password_confirm: z.string().min(1, '비밀번호 확인을 입력해주세요.'),
     username: z
       .string()
       .min(1, '이름을 입력해주세요.')
@@ -49,11 +44,7 @@ export const SignUpSchema = z
 
     /** 휴대폰 인증 필수 */
 
-    phone_auth: z
-      .string()
-      .min(6, '인증번호는 6자리 숫자로 입력해주세요.')
-      .max(6, '인증번호는 6자리 숫자로 입력해주세요.')
-      .optional(),
+    phone_auth: z.string(),
 
     isPhoneVerified: z.boolean().refine(value => value === true, {
       message: '휴대폰 인증이 필요합니다.',

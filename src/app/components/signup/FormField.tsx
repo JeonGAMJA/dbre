@@ -5,28 +5,10 @@ import { ChangeEvent, useState } from 'react';
 import { useEmailValidation } from '@/hooks/useEmailValidation';
 import { SignupFormData } from '@/app/auth/schemas/SignupSchema';
 import { formatPhoneNumber } from '@/utils/phone';
+import { SignUpField } from '@/constants/signup';
 
 interface FormFieldProps {
-  field: {
-    id:
-      | 'email'
-      | 'password'
-      | 'password_confirm'
-      | 'username'
-      | 'phone_number'
-      | 'phone_auth'
-      | 'isPhoneVerified'
-      | 'terms'
-      | 'privacy'
-      | 'marketing'
-      | 'isEmailAvailable';
-    label: string;
-    type: string;
-    placeholder: string;
-    button?: {
-      text: string;
-    };
-  };
+  field: SignUpField;
   children?: React.ReactNode;
 }
 
@@ -42,7 +24,7 @@ export const FormField = ({ field }: FormFieldProps) => {
   const errorMessage = errors[field.id]?.message?.toString() || '';
 
   const { checkEmailForSignup } = useEmailValidation(watch, setValue);
-  const [isPhoneAuthVisible, setIsPhoneAuthVisible] = useState(false);
+  const [isAuthFieldVisible, setIsAuthFieldVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleButtonClick = () => {
@@ -51,9 +33,9 @@ export const FormField = ({ field }: FormFieldProps) => {
         checkEmailForSignup();
         break;
       case 'phone_number':
-        setIsPhoneAuthVisible(true);
+        setIsAuthFieldVisible(true);
         setTimeout(() => {
-          setIsPhoneAuthVisible(false);
+          setIsAuthFieldVisible(false);
         }, 239000);
         break;
     }
@@ -69,7 +51,7 @@ export const FormField = ({ field }: FormFieldProps) => {
 
     if (code === '123456') {
       setSuccessMessage('인증에 성공했습니다.');
-      setValue('isPhoneVerified', false, { shouldValidate: true });
+      setValue('isPhoneVerified', true, { shouldValidate: true });
     } else {
       setError('phone_auth', { message: '인증에 실패했습니다.' });
       setSuccessMessage('');
@@ -78,23 +60,24 @@ export const FormField = ({ field }: FormFieldProps) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    const id = e.target.id as keyof SignupFormData;
 
-    switch (field.type) {
+    switch (e.target.type) {
       case 'tel':
         e.target.value = formatPhoneNumber(value);
-        setValue(field.id, e.target.value, { shouldValidate: true });
+        setValue(id, e.target.value, { shouldValidate: true });
         break;
 
       case 'email':
-        setValue(field.id, value, { shouldValidate: true });
+        setValue(id, value, { shouldValidate: true });
         break;
 
       case 'password':
-        setValue(field.id, value, { shouldValidate: true });
+        setValue(id, value, { shouldValidate: true });
         break;
 
       default:
-        setValue(field.id, value, { shouldValidate: true });
+        setValue(id, value, { shouldValidate: true });
     }
   };
 
@@ -125,14 +108,14 @@ export const FormField = ({ field }: FormFieldProps) => {
           </Button>
         )}
       </div>
-      {field.id === 'phone_number' && isPhoneAuthVisible && (
+      {field.authField && isAuthFieldVisible && (
         <div className="pl-[32rem] !mt-[3rem] grid grid-cols-[54rem_14rem] gap-x-8">
           <Input
-            id="phone_auth"
-            type="number"
-            placeholder="인증번호 입력"
+            id={field.authField.id}
+            type={field.authField.type}
+            placeholder={field.authField.placeholder}
             helperText={successMessage || errors.phone_auth?.message}
-            {...register('phone_auth', { onChange: e => handleChange(e) })}
+            {...register(field.authField.id, { onChange: e => handleChange(e) })}
           />
           <Button
             type="button"
@@ -140,7 +123,7 @@ export const FormField = ({ field }: FormFieldProps) => {
             className="!w-[14rem] h-[5rem] text-[2rem] mt-[2.2rem]"
             onClick={handleVerifyCode}
           >
-            인증 확인
+            {field.authField.button?.text}
           </Button>
         </div>
       )}
